@@ -1,0 +1,89 @@
+<html>
+
+<head>
+    <title></title>
+</head>
+<style>
+    body {
+        background-color: black;
+    }
+</style>
+
+<body>
+    <canvas id="canvas"></canvas>
+</body>
+<script src="box2dweb.js"></script>
+<script src="script.js"></script>
+<script>
+    var canvas = document.getElementById('canvas');
+
+    var height = canvas.height = window.outerHeight;
+    var width = canvas.width = window.outerWidth;
+
+    var ctx = canvas.getContext('2d');
+    ctx.font = '50px Arial';
+    ctx.lineWidth = '5';
+
+    var bodies = [];
+    var rainbowCnt = 0;
+    
+    new Body({
+        type: 'static',
+        x: 0,
+        y: 21,
+        width: 800,
+        height: 3
+    });
+
+    function render() {
+        GAME_WORLD.Step(1 / 60, 10, 5);
+
+        ctx.clearRect(0, 0, width, height);
+        
+        bodies.forEach(function (body, ind) {
+            var x = body.GetPosition().x;
+            var y = body.GetPosition().y;
+
+            ctx.strokeStyle = 'hsla(' + body.rainbowCnt + ', 100%, 50%, 1.0)';
+            ctx.save();
+            ctx.translate(x * 30, y * 30);
+            ctx.rotate(body.GetAngle());
+            ctx.strokeText(body.letter, 0, 0);
+            ctx.restore();
+            if (y > 50) {
+                bodies.splice(ind, 1);
+                GAME_WORLD.DestroyBody(body);
+                console.log('delted');
+            }
+        });
+        requestAnimationFrame(render);
+    }
+
+    requestAnimationFrame(render);
+
+    document.addEventListener('keydown', function (e) {
+        e.preventDefault();
+
+        var body = new Body({
+            x: 20,
+            y: 23,
+            shape: 'circle'
+        });
+
+        var randomX = Math.random() > 0.5 ? Math.floor(Math.random() * 10) : -Math.floor(Math.random() * 10);
+        var randomY = -Math.floor(Math.random() * 25 + 5);
+        body.ApplyImpulse(new box2d.b2Vec2(randomX, randomY), body.GetWorldCenter());
+        body.letter = String.fromCharCode(e.which);
+        body.SetAngularVelocity(Math.random() > 0.5 ? Math.random() * 3 : -Math.random() * 3);
+        body.rainbowCnt = rainbowCnt;
+        rainbowCnt += 5;
+        bodies.push(body);
+        if (rainbowCnt > 360) {
+            rainbowCnt = 0;
+        }
+    });
+
+    
+</script>
+
+</html>
