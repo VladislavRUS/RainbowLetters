@@ -6,6 +6,8 @@
 <style>
     body {
         background-color: black;
+		 height: 100%;
+		overflow: hidden;
     }
 </style>
 
@@ -17,8 +19,8 @@
 <script>
     var canvas = document.getElementById('canvas');
 
-    var height = canvas.height = window.outerHeight;
-    var width = canvas.width = window.outerWidth;
+    var height = canvas.height = window.innerHeight;
+    var width = canvas.width = window.innerWidth;
 
     var ctx = canvas.getContext('2d');
     ctx.font = '50px Arial';
@@ -26,15 +28,7 @@
 
     var bodies = [];
     var rainbowCnt = 0;
-    
-    new Body({
-        type: 'static',
-        x: 0,
-        y: 21,
-        width: 800,
-        height: 3
-    });
-
+   
     function render() {
         GAME_WORLD.Step(1 / 60, 10, 5);
 
@@ -66,7 +60,7 @@
 
         var body = new Body({
             x: 20,
-            y: 23,
+            y: 20,
             shape: 'circle'
         });
 
